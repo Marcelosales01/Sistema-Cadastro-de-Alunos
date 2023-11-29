@@ -5,8 +5,9 @@ public class Main {
     private static final String URL = "jdbc:mysql://localhost:3306/cadastro_alunos";
     private static final String USUARIO = "root";
     private static final String SENHA = "admin123";
-    
+    static Pessoa p = new Pessoa();
     public static void main(String[] args) throws Exception {
+                           
         System.out.println("---------------------------------");
         System.out.println("---------------------------------");
         System.out.println("Sistema de Cadastro de alunos");
@@ -17,6 +18,8 @@ public class Main {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection conexao = DriverManager.getConnection(URL,USUARIO,SENHA);
             Scanner sc = new Scanner(System.in);
+            
+            
 
             while (true){
             System.out.println("1. Adicionar aluno");
@@ -36,8 +39,10 @@ public class Main {
                     break;
                 case 3:
                     modificarAluno(conexao, sc);
+                    break;
                 case 4:
                     excluirAluno(conexao, sc);
+                    break;
                 case 5:
                     System.out.println("Saindo...");
                     conexao.close();
@@ -53,20 +58,28 @@ public class Main {
 }
 
 private static void adicionarAluno(Connection conexao, Scanner sc) throws SQLException {
-    System.out.print("Nome do aluno: ");
-    String nome = sc.next();
+    
+    System.out.println("Nome do aluno: ");
+    p.setNome(sc.nextLine());
+    sc.nextLine();
+    
 
-    System.out.print("Matrícula do aluno: ");
-    String matricula = sc.next();
+    System.out.println("Matrícula do aluno: ");
+    p.setMatricula(sc.nextInt());
+    sc.nextLine();
+    
+    
 
-    System.out.print("Nota do aluno: ");
-    double nota = sc.nextDouble();
+    System.out.println("Nota do aluno: ");
+    p.setNota(sc.nextDouble());
+
+    
 
     String sql = "INSERT INTO alunos (nome, matricula, nota) VALUES (?, ?, ?)";
     try (PreparedStatement preparedStatement = conexao.prepareStatement(sql)) {
-        preparedStatement.setString(1, nome);
-        preparedStatement.setString(2, matricula);
-        preparedStatement.setDouble(3, nota);
+        preparedStatement.setString(1, p.getNome());
+        preparedStatement.setInt(2, p.getMatricula());
+        preparedStatement.setDouble(3, p.getNota());
         preparedStatement.executeUpdate();
         System.out.println("Aluno adicionado com sucesso!");
     }
@@ -83,7 +96,7 @@ private static void visualizarAlunos(Connection conexao) throws SQLException {
         while (resultSet.next()) {
             int id = resultSet.getInt("id");
             String nome = resultSet.getString("nome");
-            String matricula = resultSet.getString("matricula");
+            int matricula = resultSet.getInt("matricula");
             double nota = resultSet.getDouble("nota");
 
             System.out.printf("%-5d %-20s %-20s %-10.2f\n", id, nome, matricula, nota);
@@ -96,12 +109,13 @@ private static void modificarAluno(Connection conexao, Scanner scanner) throws S
 
     System.out.print("Digite o ID do aluno que deseja modificar: ");
     int id = scanner.nextInt();
+    scanner.nextLine();
 
     System.out.print("Novo nome do aluno: ");
-    String novoNome = scanner.next();
+    String novoNome = scanner.nextLine();
 
     System.out.print("Nova matrícula do aluno: ");
-    String novaMatricula = scanner.next();
+    int novaMatricula = scanner.nextInt();
 
     System.out.print("Nova nota do aluno: ");
     double novaNota = scanner.nextDouble();
@@ -109,7 +123,7 @@ private static void modificarAluno(Connection conexao, Scanner scanner) throws S
     String sql = "UPDATE alunos SET nome=?, matricula=?, nota=? WHERE id=?";
     try (PreparedStatement preparedStatement = conexao.prepareStatement(sql)) {
         preparedStatement.setString(1, novoNome);
-        preparedStatement.setString(2, novaMatricula);
+        preparedStatement.setInt(2, novaMatricula);
         preparedStatement.setDouble(3, novaNota);
         preparedStatement.setInt(4, id);
         int linhasAfetadas = preparedStatement.executeUpdate();

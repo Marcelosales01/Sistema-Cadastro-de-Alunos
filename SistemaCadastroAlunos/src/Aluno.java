@@ -1,16 +1,8 @@
-public class Aluno{
-    private String nome;
+public class Aluno extends Pessoa{
     private int matricula;
     private double nota;
     
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
+    
     public int getMatricula() {
         return matricula;
     }
@@ -27,8 +19,8 @@ public class Aluno{
         this.nota = nota;
     }
 
-    public Aluno(String nome, int matricula, double nota) {
-        this.nome = nome;
+    public Aluno(int matricula, double nota, String nome) {
+        super();
         this.matricula = matricula;
         this.nota = nota;
     }
